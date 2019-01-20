@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const ctx = canvas.getContext('2d');
   const HEIGHT = 500;
   const WIDTH = 500;
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, HEIGHT, WIDTH);
 
   class Snake {
     constructor(trail) {
@@ -41,11 +43,10 @@ document.addEventListener('DOMContentLoaded', function() {
       ]);
       this.apple = new Apple({ x: 20, y: 20 });
       this.direction = 'E';
+      this.tick = this.tick.bind(this);
       this.intervalId = setInterval(this.tick, 1000 / 15);
       this.alive = true;
       document.addEventListener('keydown', this.changeDirection);
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, HEIGHT, WIDTH);
     }
 
     tick() {
@@ -70,11 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     checkTrail() {
       if (
-        this.trail[0].x > WIDTH ||
-        this.trail[0].x < 0 ||
-        this.trail[0].y > HEIGHT ||
-        this.trail[0].y < 0
+        this.snake.trail[0].x > WIDTH ||
+        this.snake.trail[0].x < 0 ||
+        this.snake.trail[0].y > HEIGHT ||
+        this.snake.trail[0].y < 0
       ) {
+        debugger;
         this.alive = false;
         clearInterval(this.intervalId);
         document.removeEventListener('keydown', this.changeDirection);
@@ -82,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     move() {
-      const head = this.snake.trial[0];
+      let head = this.snake.trail;
       switch (this.direction) {
         case 'E':
           this.snake.trail.push({ x: head.x + 10, y: head.y });
