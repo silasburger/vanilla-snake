@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     render() {
       ctx.fillStyle = 'green';
       for (let i = 0; i < this.trail.length; i++) {
-        ctx.fillRect(this.trail.x, this.trail.y, 10, 10);
+        ctx.fillRect(this.trail[i].x, this.trail[i].y, 8, 8);
       }
     }
   }
@@ -37,19 +37,21 @@ document.addEventListener('DOMContentLoaded', function() {
   class Board {
     constructor() {
       this.snake = new Snake([
-        { x: 100, y: 100 },
-        { x: 90, y: 90 },
-        { x: 80, y: 80 }
+        { x: 250, y: 250 },
+        { x: 260, y: 250 },
+        { x: 270, y: 250 }
       ]);
       this.apple = new Apple({ x: 20, y: 20 });
       this.direction = 'E';
       this.tick = this.tick.bind(this);
+      this.changeDirection = this.changeDirection.bind(this);
       this.intervalId = setInterval(this.tick, 1000 / 15);
       this.alive = true;
       document.addEventListener('keydown', this.changeDirection);
     }
 
     tick() {
+      console.log('tick', this.direction);
       //update coords of snake
       //check if snake is on apple
       //if so update apple coords
@@ -59,11 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
       //check if snake is eating itself
       this.checkTrail();
 
+      //render canvas
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, HEIGHT, WIDTH);
+
       //render apple if eaten
-      if (this._newApple) {
-        this._newApple = false;
-        this.apple.render();
-      }
+      this.apple.render();
 
       //render snake
       this.snake.render();
@@ -76,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
         this.snake.trail[0].y > HEIGHT ||
         this.snake.trail[0].y < 0
       ) {
-        debugger;
         this.alive = false;
         clearInterval(this.intervalId);
         document.removeEventListener('keydown', this.changeDirection);
@@ -84,45 +86,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     move() {
-      let head = this.snake.trail;
+      let head = this.snake.trail[0];
       switch (this.direction) {
         case 'E':
-          this.snake.trail.push({ x: head.x + 10, y: head.y });
+          this.snake.trail.unshift({ x: head.x + 10, y: head.y });
           break;
 
         case 'N':
-          this.snake.trail.push({ x: head.x, y: head.y + 10 });
+          this.snake.trail.unshift({ x: head.x, y: head.y - 10 });
           break;
 
         case 'W':
-          this.snake.trail.push({ x: head.x - 10, y: head.y });
+          this.snake.trail.unshift({ x: head.x - 10, y: head.y });
           break;
 
         case 'S':
-          this.snake.trail.push({ x: head.x, y: head.y - 10 });
+          this.snake.trail.unshift({ x: head.x, y: head.y + 10 });
           break;
       }
       if (
         this.snake.trail[0].x === this.apple.coords.x &&
         this.snake.trail[0].y === this.apple.coords.y
       ) {
-        this.snake.trail.pop();
-      } else {
         this.apple.updateCoords();
-        this._newApple = true;
+      } else {
+        this.snake.trail.pop();
       }
     }
 
     changeDirection(event) {
       switch (event.keyCode) {
         case 37:
-          this.direction = 'E';
+          this.direction = 'W';
           break;
         case 38:
           this.direction = 'N';
           break;
         case 39:
-          this.direction = 'W';
+          this.direction = 'E';
           break;
         case 40:
           this.direction = 'S';
@@ -141,13 +142,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     updateCoords() {
-      this.coords.y = Math.random() * HEIGHT;
-      this.coords.x = Math.random() * WIDTH;
+      this.coords.y = Math.round((Math.random() * (HEIGHT-10)+10)/10) * 10;
+      this.coords.x = Math.round((Math.random() * (WIDTH-10)+10)/10) * 10;
     }
 
     render() {
       ctx.fillStyle = 'red';
-      ctx.fillRect(this.coords.x, this.coords.y, 10, 10);
+      ctx.fillRect(this.coords.x, this.coords.y, 8, 8);
     }
   }
 
