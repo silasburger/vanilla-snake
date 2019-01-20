@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     tick() {
-      console.log('tick', this.direction);
+      console.log('tick', this.direction, this.apple.coords);
       //update coords of snake
       //check if snake is on apple
       //if so update apple coords
@@ -142,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     updateCoords() {
-      this.coords.y = Math.round((Math.random() * (HEIGHT-10)+10)/10) * 10;
-      this.coords.x = Math.round((Math.random() * (WIDTH-10)+10)/10) * 10;
+      this.coords.y = Math.round((Math.random() * (480)+10)/10) * 10;
+      this.coords.x = Math.round((Math.random() * (480)+10)/10) * 10;
     }
 
     render() {
